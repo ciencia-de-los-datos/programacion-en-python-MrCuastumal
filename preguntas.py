@@ -12,234 +12,179 @@ Utilice el archivo `data.csv` para resolver las preguntas.
 
 """
 
+datos = open("data.csv", "r").readlines()
+datos = [z.replace("\t", " ") for z in datos]
+datos = [z.replace("\n", "") for z in datos]
+datos = [z.split(" ") for z in datos]
 
 def pregunta_01():
-    """
-    Retorne la suma de la segunda columna.
-
-    Rta/
-    214
-
-    """
-    return
+    colum_dos= ([z[1] for z in datos[0:]])
+    colum_dos_int = ([int(x) for x in colum_dos])
+    suma_de_notas = 0
+    for nota in colum_dos_int:
+        suma_de_notas  += nota
+    return suma_de_notas
 
 
 def pregunta_02():
-    """
-    Retorne la cantidad de registros por cada letra de la primera columna como la lista
-    de tuplas (letra, cantidad), ordendas alfabéticamente.
-
-    Rta/
-    [
-        ("A", 8),
-        ("B", 7),
-        ("C", 5),
-        ("D", 6),
-        ("E", 14),
-    ]
-
-    """
-    return
+    colum_uno= [z[0] for z in datos[0:]]
+    duplicados=sorted(set(colum_uno))
+    listatuplas= [(j,colum_uno.count(j))for j in duplicados]
+    return listatuplas
 
 
 def pregunta_03():
-    """
-    Retorne la suma de la columna 2 por cada letra de la primera columna como una lista
-    de tuplas (letra, suma) ordendas alfabeticamente.
-
-    Rta/
-    [
-        ("A", 53),
-        ("B", 36),
-        ("C", 27),
-        ("D", 31),
-        ("E", 67),
-    ]
-
-    """
-    return
+    suma_por_letra = {}
+    for fila in datos:
+        letra = fila[0]
+        valor = int(fila[1])
+        suma_por_letra[letra] = suma_por_letra.get(letra, 0) + valor
+    resultado = sorted([(letra, suma) for letra, suma in suma_por_letra.items()])
+    return resultado
 
 
 def pregunta_04():
-    """
-    La columna 3 contiene una fecha en formato `YYYY-MM-DD`. Retorne la cantidad de
-    registros por cada mes, tal como se muestra a continuación.
+    colum_tres= [z[2] for z in datos[0:]]
+    fechas = []
+    for linea in colum_tres:
+        fecha = linea.strip().split(',')[0]
+        fechas.append(fecha)
+    registros_por_mes = {}
+    for fecha in fechas:
+        año, mes, dia = fecha.split('-')
+        if mes in registros_por_mes:
+            registros_por_mes[mes] += 1
+        else:
+            registros_por_mes[mes] = 1
+    tuplas_por_mes = [(mes, registros_por_mes[mes]) for mes in registros_por_mes]     
+    tuplas_por_mes_ordenadas =sorted(tuplas_por_mes, key=lambda tupla: tupla[0])
 
-    Rta/
-    [
-        ("01", 3),
-        ("02", 4),
-        ("03", 2),
-        ("04", 4),
-        ("05", 3),
-        ("06", 3),
-        ("07", 5),
-        ("08", 6),
-        ("09", 3),
-        ("10", 2),
-        ("11", 2),
-        ("12", 3),
-    ]
-
-    """
-    return
+    return tuplas_por_mes_ordenadas
 
 
 def pregunta_05():
-    """
-    Retorne una lista de tuplas con el valor maximo y minimo de la columna 2 por cada
-    letra de la columa 1.
+    x = {}
+    for row in datos:
+        letra = row[0]
+        value = float(row[1])
+        if letra not in x:
+            x[letra] = (value, value)
+        else:
+            maximo, minimo = x[letra]
+            if value > maximo:
+                x[letra] = (value, minimo)
+            elif value < minimo:
+                x[letra] = (maximo, value)
 
-    Rta/
-    [
-        ("A", 9, 2),
-        ("B", 9, 1),
-        ("C", 9, 0),
-        ("D", 8, 3),
-        ("E", 9, 1),
-    ]
-
-    """
-    return
+    tupla = [(letra, int(valor[0]), int(valor[1])) for letra, valor in x.items()]
+    tuplas_ordenadas =sorted(tupla, key=lambda tupla: tupla[0])
+    
+    return tuplas_ordenadas
 
 
 def pregunta_06():
-    """
-    La columna 5 codifica un diccionario donde cada cadena de tres letras corresponde a
-    una clave y el valor despues del caracter `:` corresponde al valor asociado a la
-    clave. Por cada clave, obtenga el valor asociado mas pequeño y el valor asociado mas
-    grande computados sobre todo el archivo.
+    colum_cinco= [z[4] for z in datos[0:]]
+    diccionario= {"aaa": [float('inf'), float('-inf')],
+            "bbb": [float('inf'), float('-inf')],
+            "ccc": [float('inf'), float('-inf')],
+            "ddd": [float('inf'), float('-inf')],
+            "eee": [float('inf'), float('-inf')],
+            "fff": [float('inf'), float('-inf')],
+            "ggg": [float('inf'), float('-inf')],
+            "hhh": [float('inf'), float('-inf')],
+            "iii": [float('inf'), float('-inf')],
+            "jjj": [float('inf'), float('-inf')]}
 
-    Rta/
-    [
-        ("aaa", 1, 9),
-        ("bbb", 1, 9),
-        ("ccc", 1, 10),
-        ("ddd", 0, 9),
-        ("eee", 1, 7),
-        ("fff", 0, 9),
-        ("ggg", 3, 10),
-        ("hhh", 0, 9),
-        ("iii", 0, 9),
-        ("jjj", 5, 17),
-    ]
+    for columna in colum_cinco:
+        items = columna.split(',')
+        for item in items:
+            key, valor = item.split(':')
+            valor = int(valor)
+            if valor < diccionario[key][0]:
+                diccionario[key][0] = valor
+            if valor > diccionario[key][1]:
+                diccionario[key][1] = valor
+    result_list = sorted([(key, diccionario[key][0], diccionario[key][1]) for key in diccionario])
 
-    """
-    return
+    return result_list
 
 
 def pregunta_07():
-    """
-    Retorne una lista de tuplas que asocien las columnas 0 y 1. Cada tupla contiene un
-    valor posible de la columna 2 y una lista con todas las letras asociadas (columna 1)
-    a dicho valor de la columna 2.
+    colum_uno= [z[0] for z in datos[0:]]
+    colum_dos= ([z[1] for z in datos[0:]])
+    diccionario = {}
+    for valor, letra in zip(colum_dos, colum_uno):
+        if valor not in diccionario:
+            diccionario[valor] = [letra]
+        else:
+            diccionario[valor].append(letra)
 
-    Rta/
-    [
-        (0, ["C"]),
-        (1, ["E", "B", "E"]),
-        (2, ["A", "E"]),
-        (3, ["A", "B", "D", "E", "E", "D"]),
-        (4, ["E", "B"]),
-        (5, ["B", "C", "D", "D", "E", "E", "E"]),
-        (6, ["C", "E", "A", "B"]),
-        (7, ["A", "C", "E", "D"]),
-        (8, ["E", "D", "E", "A", "B"]),
-        (9, ["A", "B", "E", "A", "A", "C"]),
-    ]
-
-    """
-    return
+    lista_tuplas = sorted([(int(x), y) for x, y in diccionario.items()])
+    return lista_tuplas
 
 
 def pregunta_08():
-    """
-    Genere una lista de tuplas, donde el primer elemento de cada tupla contiene  el valor
-    de la segunda columna; la segunda parte de la tupla es una lista con las letras
-    (ordenadas y sin repetir letra) de la primera  columna que aparecen asociadas a dicho
-    valor de la segunda columna.
+    colum_uno= [z[0] for z in datos[0:]]
+    colum_dos= ([z[1] for z in datos[0:]])
+    diccionario = {}
+    for valor, letra in zip(colum_dos, colum_uno):
+        if valor not in diccionario:
+            diccionario[valor] = [letra]
+        else:
+            diccionario[valor].append(letra)
 
-    Rta/
-    [
-        (0, ["C"]),
-        (1, ["B", "E"]),
-        (2, ["A", "E"]),
-        (3, ["A", "B", "D", "E"]),
-        (4, ["B", "E"]),
-        (5, ["B", "C", "D", "E"]),
-        (6, ["A", "B", "C", "E"]),
-        (7, ["A", "C", "D", "E"]),
-        (8, ["A", "B", "D", "E"]),
-        (9, ["A", "B", "C", "E"]),
-    ]
-
-    """
-    return
+    lista_tuplas = sorted([(int(x), sorted(set(y))) for x, y in diccionario.items()])
+    return lista_tuplas
 
 
 def pregunta_09():
-    """
-    Retorne un diccionario que contenga la cantidad de registros en que aparece cada
-    clave de la columna 5.
+    colum_cinco= [z[4] for z in datos[0:]]
+    resultados = {}
+    for linea in colum_cinco:
+        subcadenas = linea.split(",")
+        for subcadena in subcadenas:
+            clave, valor = subcadena.split(":")
+            if clave in resultados:
+                resultados[clave] += 1
+            else:
+                resultados[clave] = 1
 
-    Rta/
-    {
-        "aaa": 13,
-        "bbb": 16,
-        "ccc": 23,
-        "ddd": 23,
-        "eee": 15,
-        "fff": 20,
-        "ggg": 13,
-        "hhh": 16,
-        "iii": 18,
-        "jjj": 18,
-    }
-
-    """
-    return
+    tupla = sorted({(clave, resultados[clave]) for clave in resultados})
+    diccionarios = {key: value for key, value in tupla}
+    
+    return diccionarios
 
 
 def pregunta_10():
-    """
-    Retorne una lista de tuplas contengan por cada tupla, la letra de la columna 1 y la
-    cantidad de elementos de las columnas 4 y 5.
+    colum1= [z[0] for z in datos[0:]]
+    colum4= [z[3] for z in datos[0:]]
+    colum5= [z[4] for z in datos[0:]]
+    result = []
+    for i in range(len(colum1)):
+        letra = colum1[i]
+        elementos_col4 = colum4[i].split(',')
+        cantidad_col5 = len(colum5[i].split(','))
+        tupla = (letra, len(elementos_col4), cantidad_col5)
+        result.append(tupla)
 
-    Rta/
-    [
-        ("E", 3, 5),
-        ("A", 3, 4),
-        ("B", 4, 4),
-        ...
-        ("C", 4, 3),
-        ("E", 2, 3),
-        ("E", 3, 3),
-    ]
-
-
-    """
-    return
+    return result
 
 
 def pregunta_11():
-    """
-    Retorne un diccionario que contengan la suma de la columna 2 para cada letra de la
-    columna 4, ordenadas alfabeticamente.
+    colum2= [z[1] for z in datos[0:]]
+    colum4= [z[3] for z in datos[0:]]
+    suma_por_letra = {}
+    for letra, numero in zip(colum4, colum2):
+        numeros = [int(x) for x in numero.split(",")]
+        for letra in letra.split(","):
+            if letra in suma_por_letra:
+                suma_por_letra[letra] += sum(numeros)
+            else:
+                suma_por_letra[letra] = sum(numeros)
 
-    Rta/
-    {
-        "a": 122,
-        "b": 49,
-        "c": 91,
-        "d": 73,
-        "e": 86,
-        "f": 134,
-        "g": 35,
-    }
-
-
-    """
-    return
+    suma_por_letra_ordenada = dict(sorted(suma_por_letra.items()))
+    
+    return suma_por_letra_ordenada
 
 
 def pregunta_12():
