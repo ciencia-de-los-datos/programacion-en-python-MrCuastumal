@@ -188,18 +188,21 @@ def pregunta_11():
 
 
 def pregunta_12():
-    """
-    Genere un diccionario que contengan como clave la columna 1 y como valor la suma de
-    los valores de la columna 5 sobre todo el archivo.
-
-    Rta/
-    {
-        'A': 177,
-        'B': 187,
-        'C': 114,
-        'D': 136,
-        'E': 324
-    }
-
-    """
-    return
+    colum1= [z[0] for z in datos[0:]]
+    colum5= [z[4] for z in datos[0:]]
+    sums = []
+    for row in colum5:
+        pairs = row.split(',')
+        row_sum = 0
+        for pair in pairs:
+            key, value = pair.split(':')
+            row_sum += int(value)
+        sums.append(row_sum)
+    sumas_por_letra = {}
+    for letra, suma in sorted(zip(colum1, sums)):
+        if letra not in sumas_por_letra:
+            sumas_por_letra[letra] = suma
+        else:
+            sumas_por_letra[letra] += suma
+    
+    return sumas_por_letra
